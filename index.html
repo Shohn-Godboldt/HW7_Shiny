@@ -132,9 +132,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> 1. Overview</h1>
-<p>This repository implements the <strong>HW 7 — Shiny</strong> assignment. The objective is to finish the starter app so it matches the public demo’s behavior and uses <code>shinyalert</code> for friendly warnings. The assignment sheet and demo are referenced in your course materials.</p>
-<p><strong>Deliverable per the handout:</strong> make the app fully functional and <strong>submit only <code>app.R</code></strong> to Moodle once finished.</p>
-<p><strong>Included files</strong> - <code>app.R</code> — main Shiny app (UI + server) - <code>helpers.R</code> — helper functions (e.g., detect numeric/categorical columns) - <code>my_sample_temp.rds</code> — provided dataset - <code>HW7-Shiny_Practice.pdf</code> — assignment handout (for reference only)</p>
+<p>This repository implements the HW 7 — Shiny assignment. The objective is to finish the starter app so it matches the public demo’s behavior and uses <code>shinyalert</code> for friendly warnings. The assignment sheet and demo are referenced in your course materials.</p>
+<p>Included files - <code>app.R</code> — main Shiny app (UI + server) - <code>helpers.R</code> — helper functions (e.g., detect numeric/categorical columns) - <code>my_sample_temp.rds</code> — provided dataset - <code>HW7-Shiny_Practice.pdf</code> — assignment handout (for reference only)</p>
 </section>
 <section id="project-setup" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> 2. Project Setup</h1>
@@ -187,9 +186,6 @@ index.qmd   # this document</code></pre>
 <li><strong>Lightweight filter</strong>: first categorical column exposed as a checkbox filter for quick exploration.</li>
 <li><strong>Download</strong>: CSV download of the current table view.</li>
 </ul>
-<blockquote class="blockquote">
-<p>The behavior aligns with the assignment’s goal to “update the starter <code>app.R</code> until it matches the demo” while tolerating occasional <code>shinyalert</code> messages for odd selections.</p>
-</blockquote>
 </section>
 <section id="ui-walkthrough" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> 5. UI Walkthrough</h1>
@@ -305,13 +301,12 @@ index.qmd   # this document</code></pre>
 <ul>
 <li>App launches from <code>app.R</code> with no errors.<br>
 </li>
-<li>Changing <strong>plot type/variables</strong> updates plot immediately.<br>
+<li>Changing plot type/variables updates plot immediately.<br>
 </li>
-<li><strong>Table</strong> matches the data used in the plot.<br>
+<li>Table matches the data used in the plot.<br>
 </li>
-<li><strong>Alerts</strong> show only for incompatible choices and do not block use.<br>
+<li>Alerts show only for incompatible choices and do not block use.<br>
 </li>
-<li>Behavior matches the <strong>demo referenced in the handout</strong>.</li>
 </ul>
 </section>
 <section id="reproducibility" class="level1" data-number="8">

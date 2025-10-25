@@ -25,11 +25,10 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # 1. Overview
 
-This repository implements the **HW 7 — Shiny** assignment. The objective is to finish the starter app so it matches the public demo’s behavior and uses `shinyalert` for friendly warnings. The assignment sheet and demo are referenced in your course materials.
+This repository implements the HW 7 — Shiny assignment. The objective is to finish the starter app so it matches the public demo’s behavior and uses `shinyalert` for friendly warnings. The assignment sheet and demo are referenced in your course materials.
 
-**Deliverable per the handout:** make the app fully functional and **submit only `app.R`** to Moodle once finished.
 
-**Included files** - `app.R` — main Shiny app (UI + server) - `helpers.R` — helper functions (e.g., detect numeric/categorical columns) - `my_sample_temp.rds` — provided dataset - `HW7-Shiny_Practice.pdf` — assignment handout (for reference only)
+Included files - `app.R` — main Shiny app (UI + server) - `helpers.R` — helper functions (e.g., detect numeric/categorical columns) - `my_sample_temp.rds` — provided dataset - `HW7-Shiny_Practice.pdf` — assignment handout (for reference only)
 
 # 2. Project Setup
 
@@ -79,7 +78,7 @@ shiny::runApp()
 -   **Lightweight filter**: first categorical column exposed as a checkbox filter for quick exploration.
 -   **Download**: CSV download of the current table view.
 
-> The behavior aligns with the assignment’s goal to “update the starter `app.R` until it matches the demo” while tolerating occasional `shinyalert` messages for odd selections.
+
 
 # 5. UI Walkthrough
 
@@ -175,10 +174,10 @@ output$main_plot <- renderPlot({
 # 7. Testing Checklist
 
 -   App launches from `app.R` with no errors.\
--   Changing **plot type/variables** updates plot immediately.\
--   **Table** matches the data used in the plot.\
--   **Alerts** show only for incompatible choices and do not block use.\
--   Behavior matches the **demo referenced in the handout**.
+-   Changing plot type/variables updates plot immediately.\
+-   Table matches the data used in the plot.\
+-   Alerts show only for incompatible choices and do not block use.\
+
 
 # 8. Reproducibility
 
