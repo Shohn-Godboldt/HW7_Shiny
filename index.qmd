@@ -1,0 +1,215 @@
+---
+title: "HW 7 — Shiny Practice"
+subtitle: "STAT — interactive visualization with shiny + shinyalert"
+author: "Shohn Godboldt"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-copy: true
+    code-fold: show
+editor: visual
+# Note: This page documents the homework and how to run the app.
+# The app itself runs from app.R.
+---
+
+```{r}
+#| label: setup
+#| include: false
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+
+# 1. Overview
+
+This repository implements the **HW 7 — Shiny** assignment. The objective is to finish the starter app so it matches the public demo’s behavior and uses `shinyalert` for friendly warnings. The assignment sheet and demo are referenced in your course materials.
+
+**Deliverable per the handout:** make the app fully functional and **submit only `app.R`** to Moodle once finished.
+
+**Included files** - `app.R` — main Shiny app (UI + server) - `helpers.R` — helper functions (e.g., detect numeric/categorical columns) - `my_sample_temp.rds` — provided dataset - `HW7-Shiny_Practice.pdf` — assignment handout (for reference only)
+
+# 2. Project Setup
+
+## 2.1 Create/organize the project
+
+Place all files at the top level of your R Project (or Git repo):
+
+```         
+app.R
+helpers.R
+my_sample_temp.rds
+HW7-Shiny_Practice.pdf
+index.qmd   # this document
+```
+
+## 2.2 Install required packages
+
+```{r}
+#| eval: false
+# Run once in the Console, not while rendering:
+pkgs <- c("shiny", "shinyalert", "tidyverse", "DT", "ggplot2")
+to_install <- pkgs[!pkgs %in% installed.packages()[, "Package"]]
+if (length(to_install)) install.packages(to_install)
+```
+
+
+# 3. How to Run the App
+
+From RStudio, open `app.R` and click **Run App**, or:
+
+```{r}
+#| eval: false
+shiny::runApp()
+```
+
+
+# 4. Features Implemented
+
+-   **Plot type toggle**: Histogram or Scatter.
+-   **Dynamic variable selection**: only numeric columns are offered for x/y; options auto-update from the dataset.
+-   **Optional grouping**: color mapping by a chosen column.
+-   **Context-specific controls**:
+    -   Histogram → bins slider
+    -   Scatter → point size and alpha sliders
+-   **Data table view**: shows the same underlying data used for plotting (`DT::datatable`).
+-   **Info/warning alerts**: `shinyalert` messages for incompatible selections (e.g., scatter requires numeric X and Y).\
+-   **Lightweight filter**: first categorical column exposed as a checkbox filter for quick exploration.
+-   **Download**: CSV download of the current table view.
+
+> The behavior aligns with the assignment’s goal to “update the starter `app.R` until it matches the demo” while tolerating occasional `shinyalert` messages for odd selections.
+
+# 5. UI Walkthrough
+
+1.  **Plot Type**: choose *Histogram* or *Scatter*.\
+2.  **Variables**:
+    -   *Histogram*: choose a **numeric** X variable.
+    -   *Scatter*: choose **numeric** X and Y variables.
+3.  **Grouping (optional)**: color the plot by a selected column.\
+4.  **Sliders**:
+    -   *Histogram*: adjust **bins**.
+    -   *Scatter*: adjust **point size** and **alpha**.\
+5.  **Tabs**:
+    -   **Plot**: shows the current visualization.
+    -   **Table**: data underlying the plot.
+    -   **Summary**: quick metadata (rows/cols and chosen variables).\
+6.  **Download table**: exports the visible table to CSV.
+
+# 6. Minimal Code Notes
+
+Below are small excerpts (for documentation) that mirror the app’s internals.
+
+## 6.1 Data + helpers
+
+```{r}
+#| eval: false
+# app.R (excerpt)
+df <- readRDS("my_sample_temp.rds")
+source("helpers.R")
+
+# app.R (excerpt)
+df <- readRDS("my_sample_temp.rds")
+source("helpers.R")
+
+num_cols <- numeric_vars(df)
+cat_cols <- categorical_vars(df)
+```
+
+## 6.2 Alerts
+
+```{r}
+#| eval: false
+# app.R (excerpt)
+df <- readRDS("my_sample_temp.rds")
+source("helpers.R")
+
+# app.R (excerpt)
+observeEvent(list(input$plot_type, input$xvar, input$yvar), {
+  d <- data_react()
+  if (input$plot_type == "Histogram") {
+    if (!isTruthy(input$xvar) || !is.numeric(d[[input$xvar]])) {
+      shinyalert("Check your choice","Histogram needs a numeric X variable.", type = "warning")
+    }
+  }
+  if (input$plot_type == "Scatter") {
+    if (!isTruthy(input$xvar) || !isTruthy(input$yvar) ||
+        !is.numeric(d[[input$xvar]]) || !is.numeric(d[[input$yvar]])) {
+      shinyalert("Check your choices","Scatter needs numeric X and numeric Y.", type = "warning")
+    }
+  }
+}, ignoreInit = TRUE)
+```
+
+## 6.3 Plot rendering
+
+```{r}
+#| eval: false
+# app.R (excerpt)
+df <- readRDS("my_sample_temp.rds")
+source("helpers.R")
+
+# app.R (excerpt)
+output$main_plot <- renderPlot({
+  d <- data_react()
+  req(input$xvar, input$plot_type)
+
+  col_map <- if (!is.null(input$group) && input$group != "None" && input$group %in% names(d)) input$group else NULL
+
+  if (input$plot_type == "Histogram") {
+    validate(need(is.numeric(d[[input$xvar]]), "Histogram requires numeric X."))
+    ggplot(d, aes(x = .data[[input$xvar]], fill = if (!is.null(col_map)) .data[[col_map]] else NULL)) +
+      geom_histogram(bins = input$bins)
+  } else {
+    req(input$yvar)
+    validate(need(is.numeric(d[[input$xvar]]), "Scatter requires numeric X."),
+             need(is.numeric(d[[input$yvar]]), "Scatter requires numeric Y."))
+    ggplot(d, aes(.data[[input$xvar]], .data[[input$yvar]],
+                  color = if (!is.null(col_map)) .data[[col_map]] else NULL)) +
+      geom_point(size = input$ptsize, alpha = input$ptalpha)
+  }
+})
+```
+
+# 7. Testing Checklist
+
+-   App launches from `app.R` with no errors.\
+-   Changing **plot type/variables** updates plot immediately.\
+-   **Table** matches the data used in the plot.\
+-   **Alerts** show only for incompatible choices and do not block use.\
+-   Behavior matches the **demo referenced in the handout**.
+
+# 8. Reproducibility
+
+```{r}
+# Make this reproducible chunk part of the doc:
+sessionInfo()
+```
+
+# 9. Submission
+
+When everything matches the demo and works as expected, **upload your final `app.R`** to Moodle (per the handout).
+
+# 10. (Optional) Appendix: Helper Snippets
+
+```{r}
+#| eval: false
+# app.R (excerpt)
+df <- readRDS("my_sample_temp.rds")
+source("helpers.R")
+
+# helpers.R (reference)
+numeric_vars <- function(d) {
+  nms <- names(d)[sapply(d, is.numeric)]
+  if (length(nms) == 0) character(0) else nms
+}
+
+categorical_vars <- function(d) {
+  nms <- names(d)[sapply(d, function(x) is.factor(x) || is.character(x) || is.logical(x))]
+  if (length(nms) == 0) character(0) else nms
+}
+
+first_or_null <- function(x) if (length(x)) x[1] else NULL
+second_or_null <- function(x) if (length(x) >= 2) x[2] else first_or_null(x)
+```
